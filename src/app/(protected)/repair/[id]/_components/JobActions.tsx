@@ -1,0 +1,186 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { acceptRepairJob, completeRepairJob } from '@/app/actions/repair'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { toast } from 'sonner'
+import { Camera } from 'lucide-react'
+
+export function AcceptJobForm({ jobId }: { jobId: string }) {
+  const router = useRouter()
+  const [eta, setEta] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const presetETAs = ['15 นาที', '30 นาที', '1 ชั่วโมง', '2 ชั่วโมง']
+
+  const handleAccept = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    const res = await acceptRepairJob(jobId, eta)
+    if (res.error) {
+      toast.error(res.error)
+      setLoading(false)
+    } else {
+      toast.success('รับงานสำเร็จ (Job Accepted)')
+      router.refresh()
+    }
+  }
+
+  return (
+    <form onSubmit={handleAccept} className="bg-white p-6 rounded-[24px] border border-gray-100 mt-6 shadow-sm">
+      <h3 className="font-semibold text-xl mb-6 text-gray-900 tracking-tight">รับงานซ่อม</h3>
+      <div className="space-y-6">
+        <div>
+          <Label htmlFor="eta" className="text-[15px] text-gray-500 mb-3 block font-medium">เวลาที่คาดว่าจะเสร็จ (ETA)</Label>
+          
+          <div className="flex flex-wrap gap-2 mb-4">
+            {presetETAs.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => setEta(preset)}
+                className={`px-4 py-2 rounded-full text-[15px] font-medium transition-all duration-200 active:scale-95 ${
+                  eta === preset 
+                    ? 'bg-[#00B900] text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+
+          <Input 
+            id="eta" 
+            value={eta} 
+            onChange={e => setEta(e.target.value)} 
+            placeholder="หรือระบุเวลาเอง..." 
+            required
+            className="rounded-full bg-gray-50/50 border-gray-200 h-12 px-5 text-[17px] focus-visible:ring-[#00B900]"
+          />
+        </div>
+        <Button 
+          type="submit" 
+          disabled={loading || !eta}
+          className="w-full h-14 rounded-full bg-[#00B900] hover:bg-[#009900] text-white text-[17px] font-semibold active:scale-95 transition-transform"
+        >
+          {loading ? 'กำลังรับงาน...' : 'ยืนยันการรับงาน'}
+        </Button>
+      </div>
+    </form>
+  )
+}
+
+export function CompleteJobForm({ jobId }: { jobId: string }) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [note, setNote] = useState('')
+
+  const quickTags = ['เปลี่ยนอะไหล่', 'ทำความสะอาด', 'ปรับตั้งค่า']
+
+  const handleTagClick = (tag: string) => {
+    setNote(prev => prev ? `${prev}, ${tag}` : tag)
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImagePreview(URL.createObjectURL(file))
+    } else {
+      setImagePreview(null)
+    }
+  }
+
+  const handleComplete = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    const formData = new FormData(e.currentTarget)
+    formData.append('jobId', jobId)
+
+    const res = await completeRepairJob(formData)
+    if (res.error) {
+      toast.error(res.error)
+      setLoading(false)
+    } else {
+      toast.success('บันทึกงานเสร็จสิ้น รอ QC')
+      router.refresh()
+    }
+  }
+
+  return (
+    <form onSubmit={handleComplete} className="bg-white p-6 rounded-[24px] border border-gray-100 mt-6 shadow-sm">
+      <h3 className="font-semibold text-xl mb-6 text-gray-900 tracking-tight">ปิดงานซ่อม</h3>
+      <div className="space-y-6">
+        <div>
+          <Label htmlFor="note" className="text-[15px] text-gray-500 mb-3 block font-medium">บันทึกการแก้ไข</Label>
+          
+          <div className="flex flex-wrap gap-2 mb-3">
+            {quickTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => handleTagClick(tag)}
+                className="px-4 py-2 rounded-full text-[14px] bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 active:scale-95 transition-all"
+              >
+                + {tag}
+              </button>
+            ))}
+          </div>
+
+          <textarea 
+            id="note" 
+            name="note"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            rows={3}
+            placeholder="อธิบายการแก้ไขเพิ่มเติม..." 
+            required
+            className="w-full p-4 border border-gray-200 rounded-[18px] bg-gray-50/50 text-[17px] focus:ring-2 focus:ring-[#00B900] focus:border-transparent outline-none transition-shadow"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="imgAfter" className="text-[15px] text-gray-500 mb-3 block font-medium">ภาพหลังแก้ไข</Label>
+          <div className="mt-2">
+            <label 
+              htmlFor="imgAfter" 
+              className="flex flex-col items-center justify-center w-full h-48 border border-gray-200 rounded-[20px] cursor-pointer bg-gray-50/50 hover:bg-gray-100/50 overflow-hidden transition-colors"
+            >
+              {imagePreview ? (
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3">
+                    <Camera className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <p className="text-[15px] text-gray-500 font-medium">แตะเพื่อถ่ายภาพ</p>
+                </div>
+              )}
+              <input 
+                id="imgAfter" 
+                name="imgAfter" 
+                type="file" 
+                accept="image/*" 
+                capture="environment" 
+                className="hidden" 
+                onChange={handleImageChange}
+              />
+            </label>
+          </div>
+        </div>
+
+        <Button 
+          type="submit" 
+          disabled={loading}
+          className="w-full h-14 rounded-full bg-[#00B900] hover:bg-[#009900] text-white text-[17px] font-semibold active:scale-95 transition-transform"
+        >
+          {loading ? 'กำลังบันทึก...' : 'ส่งตรวจ QC'}
+        </Button>
+      </div>
+    </form>
+  )
+}

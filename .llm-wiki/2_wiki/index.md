@@ -1,0 +1,17 @@
+# Project Knowledge Index
+
+## Lessons Learned & Fixes
+- [Mobile Fast-Track UI & State Bridging Lessons](lessons-learned/mobile-fast-track-ui.md) - บันทึกการสร้างหน้าจอ Fast-Track สำหรับมือถือ, การทำ Client-Side Watermarking, ระบบ Draft ด้วย localStorage และการเชื่อมต่อ State (Bridge) ให้กับ react-hook-form
+- [RBAC Enum Casing & Playwright Locators](lessons-learned/rbac-casing-and-e2e.md) - บันทึกการแก้ไขปัญหา UserRole (Uppercase) ที่ทำให้เกิด Type Error ตอน Build และการแก้ไขปัญหา Playwright Script พังจากการใช้ XPath ใน Apple-style UI
+- [Item Master Upsert & Auto Fill Sync Flow](lessons-learned/item-master-upsert-flow.md) - บันทึกสาเหตุและการแก้ไขปัญหา Auto Fill ของ Item Master ไม่ทำงานเนื่องจากการข้ามเก็บ Item Code และการจัดการ Error แบบเงียบ
+- [Rework Form Refactoring & PDF Export Wrapping](lessons-learned/rework-form-refactoring-and-pdf.md) - สรุปบทเรียนการเปลี่ยนมาใช้ react-hook-form, ข้อควรระวังในการใช้ useFormContext นอก Provider และการแก้ปัญหาตัวหนังสือไทยขาดหายบน PDF ด้วย Zero-Width Space (\u200B)
+- [RAG Streaming, Function Calling & Impeccable UI Lessons](lessons-learned/rag-ui-and-hybrid-search.md) - บันทึกบทเรียนการทำ Stream SSE, Hybrid Search (RPC), การใช้ Gemini Function Calling ดึงสถิติในรูปแบบสตรีม, และการปรับ UI แชทเป็น Sidebar Overlay ตามมาตรฐาน Impeccable Design
+- [Windows CLI Environment & Unzip command workaround](lessons-learned/windows-cli-environment.md) - วิธีแก้ปัญหาคำสั่ง unzip ไม่ทำงานบนระบบปฏิบัติการ Windows โดยการใช้ unzip.exe ของ Git for Windows
+- [Presentation Scaling & Portal Rendering Gotchas](lessons-learned/presentation-scaling-and-portal-rendering.md) - บันทึกปัญหา Scrollbar หายเนื่องจาก min-h-screen ขัดแย้งกับ transform scale และวิธี bypass createPortal เพื่อให้ Modal ฝังตัวแบบ Inline ในหน้า Presentation ได้
+
+
+## Architecture & System Design
+- [Project Context & Design Guidelines](Context.md) - สรุประบบ ลอจิก ฟังก์ชัน ฟีเจอร์ และทิศทางสไตล์การออกแบบของโปรเจกต์ SFC SMART REPAIR
+- [QSMS Project Overview](architecture/project-overview.md) - Current high-level map of the Next.js portal, module boundaries, API route responsibilities, Supabase/GAS split, and operational notes.
+- [Next.js RAG Module Architecture](architecture/rag-module-nextjs.md) - สรุปสถาปัตยกรรมโมดูล RAG ของระบบ Next.js Portal ที่ใช้ Gemini API ร่วมกับ Supabase pgvector สำหรับเก็บและสืบค้นเอกสาร
+- [Next.js + Supabase Auth & Storage](architecture/nextjs-supabase-auth-storage.md) - สรุปสถาปัตยกรรมการย้ายระบบ Auth เป็น Server-State ด้วย HTTP-Only Cookie และการเชื่อมต่อ Storage โดยตรงแทน GAS

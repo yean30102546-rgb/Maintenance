@@ -1,0 +1,75 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  engineType      = "binary"
+  output          = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String    @id @default(cuid())
+  supabaseAuthId String?   @unique
+  lineUserId     String?   @unique
+  username       String?   @unique
+  password       String?
+  role           String    // "admin", "user", "technician", "engineer"
+  fullname       String
+  profilePicture String?
+  dept           String?
+  line           String?
+  contact        String?
+  status         String    @default("active")
+  isChief        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  repairJobsRequested RepairJob[] @relation("Requester")
+  repairJobsAssigned  RepairJob[] @relation("Technician")
+  repairJobsQc        RepairJob[] @relation("QcBy")
+}
+
+model RepairJob {
+  id           String    @id @default(cuid())
+  jobId        String    @unique // e.g., REP-YYYYMMDD-HHmmss
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  requesterId  String
+  requester    User      @relation("Requester", fields: [requesterId], references: [id])
+  dept         String?
+  machine      String?
+  side         String?   
+  opType       String?   
+  detail       String?   
+  imgBefore    String?
+  imgAfter     String?
+  status       String    @default("รอซ่อม") 
+  
+  technicianId String?
+  technician   User?     @relation("Technician", fields: [technicianId], references: [id])
+  doneDate     DateTime?
+  planStopDate DateTime?
+  eta          String?
+  note         String?
+
+  qcResult     String?
+  qcById       String?
+  qcBy         User?     @relation("QcBy", fields: [qcById], references: [id])
+  qcNote       String?
+  qcDate       DateTime?
+
+  acceptDate   DateTime?
+  slaScore     Int?
+}
+
+model Machine {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  dept         String?
+  status       String    @default("active")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
