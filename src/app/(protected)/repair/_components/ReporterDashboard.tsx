@@ -39,7 +39,7 @@ export function ReporterDashboard({ jobs }: { jobs: RepairJob[] }) {
       )}
 
       {/* Floating Action Button for mobile */}
-      <Link href="/repair/create" className="fixed bottom-6 right-6 w-14 h-14 bg-[#00B900] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#009900] hover:scale-105 transition-transform">
+      <Link href="?action=create-repair" scroll={false} className="fixed bottom-6 right-6 w-14 h-14 btn-liquid-fab rounded-full flex items-center justify-center z-50">
         <Plus className="w-8 h-8" />
       </Link>
     </div>

@@ -1,8 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
-  engineType      = "binary"
-  output          = "../src/generated/prisma"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
@@ -29,6 +27,9 @@ model User {
   repairJobsRequested RepairJob[] @relation("Requester")
   repairJobsAssigned  RepairJob[] @relation("Technician")
   repairJobsQc        RepairJob[] @relation("QcBy")
+
+  pmJobsDone          PmJob[] @relation("PmTechnician")
+  pmJobsApproved      PmJob[] @relation("PmApprover")
 }
 
 model RepairJob {
@@ -45,6 +46,8 @@ model RepairJob {
   opType       String?   
   detail       String?   
   imgBefore    String?
+  imgBefore2   String?
+  imgBefore3   String?
   imgAfter     String?
   status       String    @default("รอซ่อม") 
   
@@ -53,6 +56,8 @@ model RepairJob {
   doneDate     DateTime?
   planStopDate DateTime?
   eta          String?
+  pendingReason String?
+  rejectReason  String?
   note         String?
 
   qcResult     String?
@@ -72,4 +77,70 @@ model Machine {
   status       String    @default("active")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+model PmTemplate {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  machineType  String?   // e.g. "FLF", "Generic"
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  items        PmChecklistItem[]
+  pmJobs       PmJob[]
+}
+
+model PmChecklistItem {
+  id           String      @id @default(cuid())
+  templateId   String
+  template     PmTemplate  @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  taskName     String
+  orderIndex   Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  results      PmJobResult[]
+}
+
+model PmJob {
+  id              String    @id @default(cuid())
+  pmCode          String    @unique // e.g. PM-YYYYMMDD-HHmmss
+  templateId      String
+  template        PmTemplate @relation(fields: [templateId], references: [id])
+  machine         String
+  pmDate          DateTime
+  shift           String?
+  productionLine  String?
+  technicianId    String
+  technician      User      @relation("PmTechnician", fields: [technicianId], references: [id])
+  approverId      String?
+  approver        User?     @relation("PmApprover", fields: [approverId], references: [id])
+  
+  runningHours    Int?
+  partsReplaced   String?
+  overallCondition String   // "pass", "warn", "fail"
+  workDone        String?
+  remarks         String?
+  nextPmDate      DateTime?
+  
+  status          String    @default("done")
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  results         PmJobResult[]
+}
+
+model PmJobResult {
+  id            String    @id @default(cuid())
+  pmJobId       String
+  pmJob         PmJob     @relation(fields: [pmJobId], references: [id], onDelete: Cascade)
+  checklistItemId String
+  checklistItem PmChecklistItem @relation(fields: [checklistItemId], references: [id])
+  
+  result        String    // "pass", "fail", "n/a", etc.
+  note          String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

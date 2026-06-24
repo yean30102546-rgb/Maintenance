@@ -22,8 +22,12 @@ export function JobCard({ job }: JobCardProps) {
         return 'bg-red-100 text-red-700 border-red-200'
       case 'กำลังซ่อม':
         return 'bg-yellow-100 text-yellow-700 border-yellow-200'
-      case 'รอ QC':
-        return 'bg-blue-100 text-blue-700 border-blue-200'
+      case 'รออะไหล่':
+        return 'bg-orange-100 text-orange-700 border-orange-200'
+      case 'ตีกลับ':
+        return 'bg-rose-100 text-rose-700 border-rose-200'
+      case 'รองานแก้ไข':
+        return 'bg-pink-100 text-pink-700 border-pink-200'
       case 'ซ่อมเสร็จ':
         return 'bg-green-100 text-green-700 border-green-200'
       default:
@@ -37,8 +41,11 @@ export function JobCard({ job }: JobCardProps) {
         return <AlertCircle className="w-4 h-4 mr-1" />
       case 'กำลังซ่อม':
         return <Wrench className="w-4 h-4 mr-1" />
-      case 'รอ QC':
+      case 'รออะไหล่':
         return <Clock className="w-4 h-4 mr-1" />
+      case 'ตีกลับ':
+      case 'รองานแก้ไข':
+        return <AlertCircle className="w-4 h-4 mr-1" />
       case 'ซ่อมเสร็จ':
         return <CheckCircle2 className="w-4 h-4 mr-1" />
       default:

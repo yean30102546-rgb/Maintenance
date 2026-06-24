@@ -8,7 +8,8 @@
 - [RAG Streaming, Function Calling & Impeccable UI Lessons](lessons-learned/rag-ui-and-hybrid-search.md) - บันทึกบทเรียนการทำ Stream SSE, Hybrid Search (RPC), การใช้ Gemini Function Calling ดึงสถิติในรูปแบบสตรีม, และการปรับ UI แชทเป็น Sidebar Overlay ตามมาตรฐาน Impeccable Design
 - [Windows CLI Environment & Unzip command workaround](lessons-learned/windows-cli-environment.md) - วิธีแก้ปัญหาคำสั่ง unzip ไม่ทำงานบนระบบปฏิบัติการ Windows โดยการใช้ unzip.exe ของ Git for Windows
 - [Presentation Scaling & Portal Rendering Gotchas](lessons-learned/presentation-scaling-and-portal-rendering.md) - บันทึกปัญหา Scrollbar หายเนื่องจาก min-h-screen ขัดแย้งกับ transform scale และวิธี bypass createPortal เพื่อให้ Modal ฝังตัวแบบ Inline ในหน้า Presentation ได้
-
+- [Repair Workflow, Cache Invalidation & Turbopack Fixes](lessons-learned/repair-workflow-and-cache-invalidation.md) - บทเรียนการตั้งค่า revalidatePath สำหรับ Server Actions, การแก้ปัญหา PrismaClientInitializationError ควบคู่กับปัญหา Turbopack, และการทดสอบ Playwright กับหน้า Mock Login
+- [Dev Bypass Role Conflict & "Magic Engineer" Bug](lessons-learned/dev-bypass-role-conflict.md) - บันทึกปัญหาการใช้ Development Bypass สวมรอยสิทธิ์อัตโนมัติใน layout.tsx ที่ทำให้ Role ของผู้ใช้ถูกเปลี่ยนเป็นช่างเทคนิคระหว่างการ Navigation
 
 ## Architecture & System Design
 - [Project Context & Design Guidelines](Context.md) - สรุประบบ ลอจิก ฟังก์ชัน ฟีเจอร์ และทิศทางสไตล์การออกแบบของโปรเจกต์ SFC SMART REPAIR

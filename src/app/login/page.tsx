@@ -1,10 +1,17 @@
 "use client";
 
+import { useActionState } from 'react';
 import { motion } from "framer-motion";
 import { Wrench } from "lucide-react";
-import { mockLogin } from "./actions";
+import { loginWithCode } from "./actions";
+
+const initialState = {
+  error: "",
+};
 
 export default function LoginPage() {
+  const [state, formAction, isPending] = useActionState(loginWithCode, initialState);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-gray-50 to-white overflow-hidden relative">
       {/* Decorative background blur blobs */}
@@ -17,7 +24,7 @@ export default function LoginPage() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md px-6 z-10"
       >
-        <div className="bg-white/70 backdrop-blur-2xl rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 text-center flex flex-col items-center">
+        <div className="bg-white/70 backdrop-blur-2xl rounded-[32px] p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 text-center flex flex-col items-center">
           
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
@@ -47,19 +54,35 @@ export default function LoginPage() {
           </motion.p>
 
           <motion.form 
-            action={mockLogin} 
+            action={formAction} 
             className="w-full"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
+            {state?.error && (
+              <div className="mb-4 p-3 text-sm text-red-600 bg-red-50/80 backdrop-blur-sm rounded-2xl border border-red-100 text-center">
+                {state.error}
+              </div>
+            )}
+            
+            <div className="mb-4">
+              <input 
+                type="text" 
+                name="passcode"
+                placeholder="กรอกรหัส (reporter หรือ tech)"
+                required
+                className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-center placeholder:text-gray-400"
+              />
+            </div>
+            
             <button 
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center group"
+              disabled={isPending}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center group"
             >
               <span className="flex items-center">
-                เข้าสู่ระบบด้วย LINE (Mock)
-                <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                {isPending ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ (Testing)'}
               </span>
             </button>
           </motion.form>
@@ -70,7 +93,7 @@ export default function LoginPage() {
             transition={{ delay: 0.6, duration: 0.5 }}
             className="mt-6 text-sm text-gray-400"
           >
-            สำหรับการทดสอบระบบเท่านั้น
+            ใช้สำหรับทดสอบสลับ Role ผู้ใช้งาน
           </motion.p>
         </div>
       </motion.div>
